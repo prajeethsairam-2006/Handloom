@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Manage Artisans')}"></head>
+<body>
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<main class="container my-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb small">
+            <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}" class="text-decoration-none">Admin</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Artisan Profiles</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-1"><i class="bi bi-shop me-2 text-primary"></i> Registered Artisans & Looms</h3>
+            <span class="text-muted small">Manage producer accounts, verification, and active platform statuses</span>
+        </div>
+        <span class="badge bg-primary fs-6" th:text="${artisans.size()} + ' Artisans'">4 Artisans</span>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-custom align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Artisan / Business</th>
+                        <th>Craft Specialization</th>
+                        <th>Origin Location</th>
+                        <th>Contact Email</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="art : ${artisans}">
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="artisan-avatar" style="width: 40px; height: 40px; font-size: 1rem;" th:text="${#strings.substring(art.businessName, 0, 1)}">L</div>
+                                <div>
+                                    <strong class="text-dark d-block" th:text="${art.businessName}">Lakshmi Handlooms</strong>
+                                    <span class="small text-muted" th:text="${art.name}">Lakshmi Devi</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="small" th:text="${art.craftType}">Handwoven Silk Sarees</td>
+                        <td class="small text-muted" th:text="${art.location}">Coimbatore, Tamil Nadu</td>
+                        <td class="small" th:text="${art.email}">lakshmi@artisan.com</td>
+                        <td>
+                            <span th:class="${art.status == 'ACTIVE' ? 'badge bg-success' : 'badge bg-secondary'}" th:text="${art.status}">ACTIVE</span>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <a th:href="@{/artisans/{id}(id=${art.id})}" class="btn btn-sm btn-outline-primary" target="_blank" title="View Public Profile">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <form th:action="@{/admin/artisans/{id}/status(id=${art.id})}" method="post" class="d-inline">
+                                    <input type="hidden" name="status" th:value="${art.status == 'ACTIVE' ? 'INACTIVE' : 'ACTIVE'}">
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary" th:text="${art.status == 'ACTIVE' ? 'Deactivate' : 'Activate'}">
+                                        Deactivate
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

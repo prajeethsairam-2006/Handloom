@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('All Marketplace Orders')}"></head>
+<body>
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<main class="container my-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb small">
+            <li class="breadcrumb-item"><a th:href="@{/admin/dashboard}" class="text-decoration-none">Admin</a></li>
+            <li class="breadcrumb-item active" aria-current="page">All Orders</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-1"><i class="bi bi-cart-check me-2 text-primary"></i> Customer Orders</h3>
+            <span class="text-muted small">Monitor real-time customer purchases, artisan shipments, and fulfillment</span>
+        </div>
+        <span class="badge bg-secondary fs-6" th:text="${orders.size()} + ' Total Orders'">2 Orders</span>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-custom align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Order Date</th>
+                        <th>Customer</th>
+                        <th>Address / City</th>
+                        <th>Total Amount</th>
+                        <th>Payment</th>
+                        <th>Current Status</th>
+                        <th>Change Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="ord : ${orders}">
+                        <td>
+                            <strong class="text-dark" th:text="${ord.orderNumber}">ORD-2026-0001</strong>
+                        </td>
+                        <td class="small" th:text="${#temporals.format(ord.createdAt, 'dd MMM yyyy, hh:mm a')}">25 Sep 2026</td>
+                        <td>
+                            <strong class="small text-dark d-block" th:text="${ord.customerName}">Priya Sharma</strong>
+                            <span class="small text-muted" th:text="${ord.phone}">9876543210</span>
+                        </td>
+                        <td class="small text-muted text-truncate" style="max-width: 180px;" th:text="${ord.city} + ', ' + ${ord.state}">Bengaluru</td>
+                        <td class="fw-bold text-dark" th:text="'₹' + ${#numbers.formatDecimal(ord.totalAmount, 1, 'COMMA', 2, 'POINT')}">₹2,250.00</td>
+                        <td>
+                            <div class="small">
+                                <span class="fw-semibold" th:text="${ord.payment != null ? ord.payment.paymentMethod : 'COD'}">COD</span>
+                                <div th:class="${ord.payment != null and ord.payment.paymentStatus == 'PAID' ? 'text-success fw-bold' : 'text-warning fw-bold'}"
+                                     th:text="${ord.payment != null ? ord.payment.paymentStatus : 'PENDING'}">PENDING</div>
+                            </div>
+                        </td>
+                        <td>
+                            <span th:class="'badge fs-6 px-2 py-1 badge-' + ${#strings.toLowerCase(ord.orderStatus)}" th:text="${ord.orderStatus}">
+                                CONFIRMED
+                            </span>
+                        </td>
+                        <td>
+                            <form th:action="@{/admin/orders/{id}/status(id=${ord.id})}" method="post" class="d-flex align-items-center gap-1">
+                                <select name="status" class="form-select form-select-sm" style="width: 135px;">
+                                    <option value="PLACED" th:selected="${ord.orderStatus == 'PLACED'}">PLACED</option>
+                                    <option value="CONFIRMED" th:selected="${ord.orderStatus == 'CONFIRMED'}">CONFIRMED</option>
+                                    <option value="PROCESSING" th:selected="${ord.orderStatus == 'PROCESSING'}">PROCESSING</option>
+                                    <option value="SHIPPED" th:selected="${ord.orderStatus == 'SHIPPED'}">SHIPPED</option>
+                                    <option value="DELIVERED" th:selected="${ord.orderStatus == 'DELIVERED'}">DELIVERED</option>
+                                    <option value="CANCELLED" th:selected="${ord.orderStatus == 'CANCELLED'}">CANCELLED</option>
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-outline-primary">Update</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

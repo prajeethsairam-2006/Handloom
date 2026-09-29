@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Artisan Dashboard')}"></head>
+<body>
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<main class="container my-4">
+    <!-- Artisan Greeting Banner -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-3 border-bottom">
+        <div>
+            <h3 class="fw-bold mb-1">
+                <i class="bi bi-speedometer2 text-primary me-2"></i> Artisan Studio Dashboard
+            </h3>
+            <div class="text-muted small">
+                Welcome, <strong class="text-dark" th:text="${artisan.businessName}">Lakshmi Handlooms</strong>
+                (<span th:text="${artisan.craftType}">Handwoven Sarees</span>) &bull;
+                <i class="bi bi-geo-alt"></i> <span th:text="${artisan.location}">Coimbatore, Tamil Nadu</span>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2 mt-2 mt-md-0">
+            <a th:href="@{/artisan/products/add}" class="btn btn-primary btn-sm">
+                <i class="bi bi-plus-circle me-1"></i> Add Product
+            </a>
+            <a th:href="@{/artisan/products}" class="btn btn-outline-dark btn-sm">
+                <i class="bi bi-grid me-1"></i> Manage Products
+            </a>
+            <a th:href="@{/artisan/orders}" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-box-seam me-1"></i> View Orders
+            </a>
+        </div>
+    </div>
+
+    <!-- Metrics Cards (Strictly from MySQL) -->
+    <div class="row row-cols-2 row-cols-md-3 row-cols-lg-5 g-3 mb-4">
+        <div class="col">
+            <div class="metric-box">
+                <div class="metric-lbl">Total Products</div>
+                <div class="metric-val text-dark" th:text="${totalProducts}">4</div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="metric-box">
+                <div class="metric-lbl">In Stock</div>
+                <div class="metric-val text-success" th:text="${inStockProducts}">4</div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="metric-box">
+                <div class="metric-lbl">Low Stock (&le; 5)</div>
+                <div class="metric-val text-warning" th:text="${lowStockProducts}">0</div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="metric-box">
+                <div class="metric-lbl">Orders Received</div>
+                <div class="metric-val text-primary" th:text="${ordersReceived}">1</div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="metric-box">
+                <div class="metric-lbl">Products Sold</div>
+                <div class="metric-val text-secondary" th:text="${totalProductsSold}">1</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Orders Section -->
+    <div class="card border-0 shadow-sm p-4 rounded-3 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0">Recent Customer Orders For Your Products</h5>
+            <a th:href="@{/artisan/orders}" class="btn btn-sm btn-outline-primary">View All Orders</a>
+        </div>
+
+        <div th:if="${recentOrders.isEmpty()}" class="text-center py-4 text-muted small">
+            No orders received yet for your products.
+        </div>
+
+        <div th:unless="${recentOrders.isEmpty()}" class="table-responsive">
+            <table class="table table-custom align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Date</th>
+                        <th>Customer</th>
+                        <th>Your Items</th>
+                        <th>Status</th>
+                        <th>Update Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="ord : ${recentOrders}">
+                        <td>
+                            <strong class="text-dark" th:text="${ord.orderNumber}">ORD-2026-0001</strong>
+                        </td>
+                        <td class="small" th:text="${#temporals.format(ord.createdAt, 'dd MMM yyyy')}">25 Sep 2026</td>
+                        <td>
+                            <div class="small fw-semibold" th:text="${ord.customerName}">Priya Sharma</div>
+                            <div class="small text-muted" th:text="${ord.city} + ', ' + ${ord.state}">Bengaluru</div>
+                        </td>
+                        <td>
+                            <div th:each="it : ${ord.items}" class="small">
+                                <span class="fw-semibold" th:text="${it.productName}">Product</span>
+                                <span class="text-muted">(Qty: <span th:text="${it.quantity}">1</span>)</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span th:class="'badge fs-6 px-2 py-1 badge-' + ${#strings.toLowerCase(ord.orderStatus)}" th:text="${ord.orderStatus}">
+                                CONFIRMED
+                            </span>
+                        </td>
+                        <td>
+                            <form th:action="@{/artisan/orders/{id}/status(id=${ord.id})}" method="post" class="d-flex align-items-center gap-1">
+                                <select name="status" class="form-select form-select-sm" style="width: 140px;">
+                                    <option value="PROCESSING" th:selected="${ord.orderStatus == 'PROCESSING'}">PROCESSING</option>
+                                    <option value="SHIPPED" th:selected="${ord.orderStatus == 'SHIPPED'}">SHIPPED</option>
+                                    <option value="DELIVERED" th:selected="${ord.orderStatus == 'DELIVERED'}">DELIVERED</option>
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-outline-primary">Save</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Home')}"></head>
+<body>
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<main class="container my-4">
+    <!-- Clean E-Commerce Hero Section -->
+    <div class="hero-banner shadow-sm">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <span class="hero-tag">Empowering Traditional Craftspeople</span>
+                <h1 class="display-6 fw-bold mt-2 mb-3">Authentic Indian Handloom Directly From The Artisans</h1>
+                <p class="lead fs-6 text-light opacity-75 mb-4">
+                    Support local weavers, potters, and traditional artisans. Zero middleman commission means 100% fair earnings directly reach the creator's hands.
+                </p>
+                <div class="d-flex flex-wrap gap-2">
+                    <a th:href="@{/products}" class="btn btn-primary px-4 py-2">
+                        <i class="bi bi-bag me-1"></i> Browse Products
+                    </a>
+                    <a th:href="@{/artisans}" class="btn btn-outline-light px-4 py-2">
+                        <i class="bi bi-people me-1"></i> Meet Our Artisans
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-5 d-none d-lg-block text-center">
+                <div class="p-3 bg-white bg-opacity-10 rounded border border-light border-opacity-25 text-start">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <i class="bi bi-patch-check-fill fs-2 text-warning"></i>
+                        <div>
+                            <div class="fw-bold text-white">Direct-to-Consumer Model</div>
+                            <div class="small text-light opacity-75">Eliminating commission layers</div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <i class="bi bi-geo-alt-fill fs-2 text-warning"></i>
+                        <div>
+                            <div class="fw-bold text-white">Authentic Origins</div>
+                            <div class="small text-light opacity-75">Coimbatore, Jaipur, Madhubani, Kashmir</div>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <i class="bi bi-shield-fill-check fs-2 text-warning"></i>
+                        <div>
+                            <div class="fw-bold text-white">Transparent Pricing</div>
+                            <div class="small text-light opacity-75">Real craftsmanship, honest value</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Categories Section -->
+    <section class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h4 class="fw-bold mb-0">Shop by Category</h4>
+                <p class="text-muted small mb-0">Explore traditional craft forms across India</p>
+            </div>
+            <a th:href="@{/products}" class="text-decoration-none fw-semibold small text-primary">View All <i class="bi bi-arrow-right"></i></a>
+        </div>
+
+        <div class="row row-cols-2 row-cols-md-4 g-3">
+            <div class="col" th:each="cat : ${categories}">
+                <a th:href="@{/products(categoryId=${cat.id})}" class="category-card">
+                    <div class="fw-bold" th:text="${cat.name}">Category Name</div>
+                    <div class="text-muted small mt-1" th:text="${cat.description}">Category description</div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products Section -->
+    <section class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h4 class="fw-bold mb-0">Featured Products</h4>
+                <p class="text-muted small mb-0">Curated authentic masterworks praised by our patrons</p>
+            </div>
+            <a th:href="@{/products}" class="text-decoration-none fw-semibold small text-primary">Explore All <i class="bi bi-arrow-right"></i></a>
+        </div>
+
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+            <div class="col" th:each="prod : ${featuredProducts}">
+                <div class="product-card">
+                    <div class="product-image-wrap">
+                        <img th:src="@{${prod.imageUrl}}" th:alt="${prod.name}">
+                        <span class="product-badge" th:text="${prod.categoryName}">Category</span>
+                    </div>
+                    <div class="p-3 d-flex flex-column flex-grow-1">
+                        <a th:href="@{/artisans/{id}(id=${prod.artisanId})}" class="artisan-tag mb-1">
+                            <i class="bi bi-person-fill"></i> <span th:text="${prod.artisanBusinessName}">Artisan</span>
+                        </a>
+                        <h6 class="fw-semibold text-truncate mb-1">
+                            <a th:href="@{/products/{id}(id=${prod.id})}" class="text-decoration-none text-dark" th:text="${prod.name}">Product Name</a>
+                        </h6>
+                        <div class="small text-muted mb-2 text-truncate" th:text="${prod.material} + ' | ' + ${prod.originLocation}">Material & Location</div>
+
+                        <div class="d-flex align-items-center gap-1 mb-2">
+                            <div class="star-rating">
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <span class="fw-bold small text-dark" th:text="${prod.averageRating > 0 ? prod.averageRating : 'New'}">4.8</span>
+                            </div>
+                            <span class="text-muted small" th:if="${prod.reviewCount > 0}" th:text="'(' + ${prod.reviewCount} + ')'">(3)</span>
+                        </div>
+
+                        <div class="mt-auto d-flex justify-content-between align-items-center pt-2 border-top">
+                            <span class="price-tag" th:text="'₹' + ${#numbers.formatDecimal(prod.price, 1, 'COMMA', 2, 'POINT')}">₹1,450.00</span>
+                            <a th:href="@{/products/{id}(id=${prod.id})}" class="btn btn-sm btn-outline-primary">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Artisans Section -->
+    <section class="mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h4 class="fw-bold mb-0">Featured Artisans & Weavers</h4>
+                <p class="text-muted small mb-0">Meet the generational creators behind our handmade collections</p>
+            </div>
+            <a th:href="@{/artisans}" class="text-decoration-none fw-semibold small text-primary">All Artisans <i class="bi bi-arrow-right"></i></a>
+        </div>
+
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3">
+            <div class="col" th:each="artisan : ${artisans}">
+                <div class="artisan-card h-100 d-flex flex-column">
+                    <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="artisan-avatar" th:text="${#strings.substring(artisan.businessName, 0, 1)}">L</div>
+                        <div>
+                            <h6 class="fw-bold mb-0" th:text="${artisan.businessName}">Lakshmi Handlooms</h6>
+                            <div class="text-muted small"><i class="bi bi-geo-alt me-1"></i><span th:text="${artisan.location}">Location</span></div>
+                        </div>
+                    </div>
+                    <div class="badge bg-light text-dark border align-self-start mb-2" th:text="${artisan.craftType}">Craft</div>
+                    <p class="small text-muted mb-3 flex-grow-1" th:text="${artisan.description}">Bio</p>
+                    <a th:href="@{/artisans/{id}(id=${artisan.id})}" class="btn btn-sm btn-outline-secondary mt-auto">
+                        View Products
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- New Arrivals Section -->
+    <section class="mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h4 class="fw-bold mb-0">New Arrivals</h4>
+                <p class="text-muted small mb-0">Recently added handcrafted pieces fresh from the looms</p>
+            </div>
+            <a th:href="@{/products}" class="text-decoration-none fw-semibold small text-primary">View Catalog <i class="bi bi-arrow-right"></i></a>
+        </div>
+
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+            <div class="col" th:each="prod : ${newProducts}">
+                <div class="product-card">
+                    <div class="product-image-wrap">
+                        <img th:src="@{${prod.imageUrl}}" th:alt="${prod.name}">
+                        <span class="product-badge" th:text="${prod.categoryName}">Category</span>
+                    </div>
+                    <div class="p-3 d-flex flex-column flex-grow-1">
+                        <a th:href="@{/artisans/{id}(id=${prod.artisanId})}" class="artisan-tag mb-1">
+                            <i class="bi bi-person-fill"></i> <span th:text="${prod.artisanBusinessName}">Artisan</span>
+                        </a>
+                        <h6 class="fw-semibold text-truncate mb-1">
+                            <a th:href="@{/products/{id}(id=${prod.id})}" class="text-decoration-none text-dark" th:text="${prod.name}">Product Name</a>
+                        </h6>
+                        <div class="small text-muted mb-2 text-truncate" th:text="${prod.originLocation}">Location</div>
+                        <div class="mt-auto d-flex justify-content-between align-items-center pt-2 border-top">
+                            <span class="price-tag" th:text="'₹' + ${#numbers.formatDecimal(prod.price, 1, 'COMMA', 2, 'POINT')}">₹1,450.00</span>
+                            <a th:href="@{/products/{id}(id=${prod.id})}" class="btn btn-sm btn-outline-primary">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

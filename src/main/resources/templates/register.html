@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Register')}"></head>
+<body>
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<main class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
+            <div class="card border-0 shadow-sm p-4 rounded-3">
+                <div class="text-center mb-4">
+                    <i class="bi bi-flower1 fs-1 text-danger"></i>
+                    <h4 class="fw-bold mt-2 mb-1">Create an Account</h4>
+                    <p class="text-muted small">Join as a Customer or an Artisan / Producer</p>
+                </div>
+
+                <form th:action="@{/register}" th:object="${user}" method="post">
+                    <!-- Role Selection -->
+                    <div class="mb-4 text-center">
+                        <label class="form-label small fw-semibold d-block text-muted">Select Account Type</label>
+                        <div class="btn-group w-100" role="group">
+                            <input type="radio" class="btn-check" name="role" id="roleCustomer" value="CUSTOMER" th:field="*{role}" checked onchange="toggleArtisanFields(false)">
+                            <label class="btn btn-outline-primary" for="roleCustomer">
+                                <i class="bi bi-person me-1"></i> Customer / Buyer
+                            </label>
+
+                            <input type="radio" class="btn-check" name="role" id="roleArtisan" value="ARTISAN" th:field="*{role}" onchange="toggleArtisanFields(true)">
+                            <label class="btn btn-outline-primary" for="roleArtisan">
+                                <i class="bi bi-tools me-1"></i> Artisan / Seller
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Common Fields -->
+                    <div class="mb-3">
+                        <label for="name" class="form-label small fw-semibold">Full Name *</label>
+                        <input type="text" class="form-control" id="name" th:field="*{name}" placeholder="e.g. Ramesh Chandra" required>
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-6">
+                            <label for="email" class="form-label small fw-semibold">Email Address *</label>
+                            <input type="email" class="form-control" id="email" th:field="*{email}" placeholder="ramesh@example.com" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="phone" class="form-label small fw-semibold">Phone Number *</label>
+                            <input type="tel" class="form-control" id="phone" th:field="*{phone}" placeholder="9876543210" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label small fw-semibold">Password *</label>
+                        <input type="password" class="form-control" id="password" th:field="*{password}" placeholder="At least 6 characters" required>
+                    </div>
+
+                    <!-- Artisan Specific Fields (Toggled by JS) -->
+                    <div id="artisanFields" class="p-3 bg-light rounded border mb-3" style="display: none;">
+                        <h6 class="fw-bold text-dark mb-3">
+                            <i class="bi bi-shop me-1 text-primary"></i> Artisan / Craft Details
+                        </h6>
+
+                        <div class="mb-2">
+                            <label for="businessName" class="form-label small fw-semibold">Business / Loom / Studio Name *</label>
+                            <input type="text" class="form-control form-control-sm" id="businessName" th:field="*{businessName}" placeholder="e.g. Heritage Weaves">
+                        </div>
+
+                        <div class="mb-2">
+                            <label for="craftType" class="form-label small fw-semibold">Craft Type *</label>
+                            <input type="text" class="form-control form-control-sm" id="craftType" th:field="*{craftType}" placeholder="e.g. Handloom Silk Sarees, Block Print, Dokra Art">
+                        </div>
+
+                        <div class="mb-2">
+                            <label for="location" class="form-label small fw-semibold">Artisan Location (City, State) *</label>
+                            <input type="text" class="form-control form-control-sm" id="location" th:field="*{location}" placeholder="e.g. Coimbatore, Tamil Nadu">
+                        </div>
+
+                        <div class="mb-2">
+                            <label for="description" class="form-label small fw-semibold">Short Bio / Craft Heritage</label>
+                            <textarea class="form-control form-control-sm" id="description" th:field="*{description}" rows="2" placeholder="Briefly describe your craft tradition..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-primary py-2 fw-semibold">
+                            <i class="bi bi-person-plus me-1"></i> Complete Registration
+                        </button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-4 pt-3 border-top">
+                    <span class="small text-muted">Already have an account?</span>
+                    <a th:href="@{/login}" class="small fw-semibold text-primary ms-1">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    function toggleArtisanFields(isArtisan) {
+        const fields = document.getElementById('artisanFields');
+        if (isArtisan) {
+            fields.style.display = 'block';
+        } else {
+            fields.style.display = 'none';
+        }
+    }
+    // Check initial state on load
+    document.addEventListener('DOMContentLoaded', function() {
+        const artisanRadio = document.getElementById('roleArtisan');
+        if (artisanRadio && artisanRadio.checked) {
+            toggleArtisanFields(true);
+        }
+    });
+</script>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/header :: head(${product.name})}"></head>
+<body>
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<main class="container my-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb small">
+            <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none">Home</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/products}" class="text-decoration-none">Products</a></li>
+            <li class="breadcrumb-item active" aria-current="page" th:text="${product.name}">Product Name</li>
+        </ol>
+    </nav>
+
+    <!-- Product Main Info Section -->
+    <div class="card border-0 shadow-sm p-4 rounded-3 mb-5">
+        <div class="row g-4">
+            <!-- Product Image -->
+            <div class="col-md-6 col-lg-5">
+                <div class="border rounded overflow-hidden shadow-sm bg-light text-center">
+                    <img th:src="@{${product.imageUrl}}" th:alt="${product.name}" class="img-fluid w-100" style="max-height: 480px; object-fit: contain;">
+                </div>
+            </div>
+
+            <!-- Product Specs & Purchase -->
+            <div class="col-md-6 col-lg-7 d-flex flex-column">
+                <div class="mb-2">
+                    <span class="badge bg-secondary me-2" th:text="${product.categoryName}">Category</span>
+                    <a th:href="@{/artisans/{id}(id=${product.artisanId})}" class="artisan-tag">
+                        <i class="bi bi-person-fill"></i> By <span th:text="${product.artisanBusinessName}">Artisan Name</span>
+                    </a>
+                </div>
+
+                <h2 class="fw-bold text-dark mb-2" th:text="${product.name}">Handloom Mulberry Silk Saree</h2>
+
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="star-rating d-flex align-items-center gap-1">
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <span class="fw-bold fs-6 text-dark" th:text="${averageRating > 0 ? averageRating : 'No reviews yet'}">4.8</span>
+                    </div>
+                    <span class="text-muted small" th:if="${reviews != null and !reviews.isEmpty()}" th:text="'(' + ${reviews.size()} + ' customer reviews)'">(3 reviews)</span>
+                </div>
+
+                <div class="mb-4">
+                    <span class="display-6 fw-bold text-dark" th:text="'₹' + ${#numbers.formatDecimal(product.price, 1, 'COMMA', 2, 'POINT')}">₹7,499.00</span>
+                    <span class="text-muted small ms-2">(Inclusive of all artisan fees & taxes)</span>
+                </div>
+
+                <!-- Stock Availability Banner -->
+                <div class="mb-3">
+                    <span th:if="${product.stockQuantity > 0}" class="badge bg-success-subtle text-success fs-6 px-3 py-2">
+                        <i class="bi bi-check-circle me-1"></i> In Stock (<span th:text="${product.stockQuantity}">12</span> pieces available)
+                    </span>
+                    <span th:if="${product.stockQuantity <= 0}" class="badge bg-danger-subtle text-danger fs-6 px-3 py-2">
+                        <i class="bi bi-x-circle me-1"></i> Out of Stock
+                    </span>
+                </div>
+
+                <!-- Add to Cart Form -->
+                <div class="my-3 p-3 bg-light rounded border">
+                    <form th:if="${product.stockQuantity > 0}" th:action="@{/cart/add}" method="post" class="d-flex align-items-center gap-3">
+                        <input type="hidden" name="productId" th:value="${product.id}">
+                        
+                        <div class="d-flex align-items-center gap-2">
+                            <label for="quantity" class="form-label small fw-semibold mb-0">Qty:</label>
+                            <div class="qty-control">
+                                <button type="button" class="qty-btn-decrease">-</button>
+                                <input type="number" id="quantity" name="quantity" value="1" min="1" th:max="${product.stockQuantity}" readonly>
+                                <button type="button" class="qty-btn-increase">+</button>
+                            </div>
+                        </div>
+
+                        <div sec:authorize="hasRole('CUSTOMER')">
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="bi bi-cart-plus me-1"></i> Add to Cart
+                            </button>
+                        </div>
+                        <div sec:authorize="isAnonymous()">
+                            <a th:href="@{/login}" class="btn btn-primary px-4">
+                                <i class="bi bi-box-arrow-in-right me-1"></i> Login as Customer to Buy
+                            </a>
+                        </div>
+                        <div sec:authorize="hasAnyRole('ARTISAN', 'ADMIN')">
+                            <span class="text-muted small fst-italic">Logged in as Artisan/Admin. Only customer accounts can add to cart.</span>
+                        </div>
+                    </form>
+
+                    <div th:if="${product.stockQuantity <= 0}">
+                        <button class="btn btn-secondary px-4" disabled>
+                            <i class="bi bi-slash-circle me-1"></i> Out of Stock
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product Specifications -->
+                <div class="row g-2 my-3 text-secondary small">
+                    <div class="col-sm-6">
+                        <div class="p-2 border rounded bg-white">
+                            <strong><i class="bi bi-flower2 text-primary me-1"></i> Material:</strong>
+                            <span th:text="${product.material}">Pure Silk</span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="p-2 border rounded bg-white">
+                            <strong><i class="bi bi-geo-alt text-primary me-1"></i> Origin:</strong>
+                            <span th:text="${product.originLocation}">Coimbatore, Tamil Nadu</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <h6 class="fw-bold">Artisan Craft Description</h6>
+                    <p class="text-secondary small leading-relaxed" th:text="${product.description}">Product description...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Reviews Section -->
+    <section class="card border-0 shadow-sm p-4 rounded-3">
+        <h4 class="fw-bold mb-4 d-flex align-items-center justify-content-between">
+            <span><i class="bi bi-chat-heart me-2 text-danger"></i> Customer Reviews</span>
+            <span class="badge bg-light text-dark border fs-6" th:text="${reviews.size()} + ' Reviews'">3 Reviews</span>
+        </h4>
+
+        <!-- Review Submission Form (Only logged-in Customers who haven't reviewed yet) -->
+        <div th:if="${canReview}" class="p-3 bg-light rounded border mb-4">
+            <h6 class="fw-bold text-dark mb-2">Write a Product Review</h6>
+            <form th:action="@{/products/{id}/review(id=${product.id})}" method="post">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label for="rating" class="form-label small fw-semibold">Rating (1 to 5 Stars)</label>
+                        <select name="rating" id="rating" class="form-select form-select-sm" required>
+                            <option value="5">★★★★★ (5 - Excellent)</option>
+                            <option value="4">★★★★☆ (4 - Very Good)</option>
+                            <option value="3">★★★☆☆ (3 - Good)</option>
+                            <option value="2">★★☆☆☆ (2 - Fair)</option>
+                            <option value="1">★☆☆☆☆ (1 - Poor)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-9">
+                        <label for="comment" class="form-label small fw-semibold">Your Feedback / Review Comments</label>
+                        <input type="text" name="comment" id="comment" class="form-control form-control-sm" placeholder="Describe the texture, weave, craftsmanship..." required>
+                    </div>
+                    <div class="col-12 text-end">
+                        <button type="submit" class="btn btn-sm btn-primary">
+                            Submit Review
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- If not logged in as Customer -->
+        <div sec:authorize="isAnonymous()" class="alert alert-light border small text-muted mb-4">
+            <i class="bi bi-info-circle me-1 text-primary"></i> <a th:href="@{/login}" class="text-primary fw-semibold">Log in</a> as a customer to share your review on this artisan product.
+        </div>
+
+        <!-- Reviews Listing -->
+        <div th:if="${reviews.isEmpty()}" class="text-center py-4 text-muted small">
+            No customer reviews yet. Be the first to share your thoughts on this authentic artisan piece!
+        </div>
+
+        <div class="d-flex flex-column gap-3" th:unless="${reviews.isEmpty()}">
+            <div class="border-bottom pb-3" th:each="rev : ${reviews}">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <div>
+                        <strong class="text-dark me-2" th:text="${rev.customerName}">Priya Sharma</strong>
+                        <span class="star-rating">
+                            <span th:each="i : ${#numbers.sequence(1, rev.rating)}">★</span>
+                        </span>
+                    </div>
+                    <span class="text-muted small" th:text="${#temporals.format(rev.reviewDate, 'dd MMM yyyy')}">22 Sep 2026</span>
+                </div>
+                <p class="text-secondary small mb-0" th:text="${rev.comment}">Review comment content...</p>
+            </div>
+        </div>
+    </section>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

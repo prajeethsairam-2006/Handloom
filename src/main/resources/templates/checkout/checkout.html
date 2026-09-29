@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Checkout')}"></head>
+<body>
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<main class="container my-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb small">
+            <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none">Home</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/cart}" class="text-decoration-none">Cart</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Checkout</li>
+        </ol>
+    </nav>
+
+    <h3 class="fw-bold mb-4"><i class="bi bi-shield-check me-2 text-primary"></i> Secure Checkout</h3>
+
+    <form th:action="@{/checkout/place}" method="post">
+        <div class="row g-4">
+            <!-- Left: Shipping & Payment Information -->
+            <div class="col-lg-7">
+                <!-- Delivery Address Card -->
+                <div class="card border-0 shadow-sm p-4 rounded-3 mb-4">
+                    <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                        <i class="bi bi-geo-alt text-primary"></i> 1. Delivery Information
+                    </h5>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="customerName" class="form-label small fw-semibold">Recipient Full Name *</label>
+                            <input type="text" class="form-control" id="customerName" name="customerName" th:value="${customer.name}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="phone" class="form-label small fw-semibold">Contact Phone Number *</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" th:value="${customer.phone}" required>
+                        </div>
+
+                        <div class="col-12">
+                            <label for="deliveryAddress" class="form-label small fw-semibold">Street Address / House No. / Landmark *</label>
+                            <textarea class="form-control" id="deliveryAddress" name="deliveryAddress" rows="2" placeholder="e.g. Flat 302, Green Avenue, MG Road" required></textarea>
+                        </div>
+
+                        <div class="col-md-5">
+                            <label for="city" class="form-label small fw-semibold">City *</label>
+                            <input type="text" class="form-control" id="city" name="city" placeholder="e.g. Coimbatore" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="state" class="form-label small fw-semibold">State *</label>
+                            <input type="text" class="form-control" id="state" name="state" placeholder="e.g. Tamil Nadu" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="pinCode" class="form-label small fw-semibold">PIN Code *</label>
+                            <input type="text" class="form-control" id="pinCode" name="pinCode" placeholder="641018" required>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Method Card -->
+                <div class="card border-0 shadow-sm p-4 rounded-3">
+                    <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                        <i class="bi bi-credit-card text-primary"></i> 2. Choose Payment Method
+                    </h5>
+
+                    <div class="d-flex flex-column gap-3">
+                        <div class="form-check p-3 border rounded">
+                            <input class="form-check-input ms-0 me-3" type="radio" name="paymentMethod" id="payOnline" value="ONLINE_DEMO" checked>
+                            <label class="form-check-label w-100" for="payOnline">
+                                <div class="fw-bold text-dark d-flex align-items-center justify-content-between">
+                                    <span>Demo Online Payment (Instant Confirmation)</span>
+                                    <span class="badge bg-success-subtle text-success">Recommended</span>
+                                </div>
+                                <div class="small text-muted mt-1">
+                                    Simulated secure digital payment (UPI / NetBanking / Cards). Order is confirmed instantly with status <strong>PAID</strong>.
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="form-check p-3 border rounded">
+                            <input class="form-check-input ms-0 me-3" type="radio" name="paymentMethod" id="payCOD" value="COD">
+                            <label class="form-check-label w-100" for="payCOD">
+                                <div class="fw-bold text-dark">Cash on Delivery (COD)</div>
+                                <div class="small text-muted mt-1">
+                                    Pay cash directly upon delivery of your handcrafted items. Payment status is marked <strong>PENDING</strong> initially.
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Order Items & Price Summary -->
+            <div class="col-lg-5">
+                <div class="card border-0 shadow-sm p-4 rounded-3 sticky-top" style="top: 80px;">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2">Order Items Review</h5>
+
+                    <!-- Item List -->
+                    <div class="d-flex flex-column gap-3 mb-3" style="max-height: 280px; overflow-y: auto;">
+                        <div th:each="item : ${cart.items}" class="d-flex justify-content-between align-items-center pb-2 border-bottom">
+                            <div class="d-flex align-items-center gap-2">
+                                <img th:src="@{${item.productImageUrl}}" th:alt="${item.productName}" class="rounded border" style="width: 44px; height: 44px; object-fit: cover;">
+                                <div>
+                                    <div class="small fw-semibold text-truncate" style="max-width: 180px;" th:text="${item.productName}">Product Name</div>
+                                    <div class="small text-muted" th:text="${item.quantity} + ' × ₹' + ${#numbers.formatDecimal(item.productPrice, 1, 'COMMA', 2, 'POINT')}">1 × ₹2,250.00</div>
+                                </div>
+                            </div>
+                            <span class="small fw-bold text-dark" th:text="'₹' + ${#numbers.formatDecimal(item.subtotal, 1, 'COMMA', 2, 'POINT')}">₹2,250.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Price Calculations -->
+                    <div class="d-flex justify-content-between mb-2 small">
+                        <span class="text-muted">Items Subtotal:</span>
+                        <span class="fw-semibold" th:text="'₹' + ${#numbers.formatDecimal(cart.totalAmount, 1, 'COMMA', 2, 'POINT')}">₹2,250.00</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-2 small">
+                        <span class="text-muted">Shipping & Artisan Handling:</span>
+                        <span class="text-success fw-semibold">FREE</span>
+                    </div>
+
+                    <hr>
+
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="fw-bold fs-6">Total Amount Payable:</span>
+                        <span class="fw-bold fs-5 text-dark" th:text="'₹' + ${#numbers.formatDecimal(cart.totalAmount, 1, 'COMMA', 2, 'POINT')}">₹2,250.00</span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary py-2 fw-semibold w-100" onclick="return confirm('Confirm and place this order?');">
+                        <i class="bi bi-lock me-1"></i> Place Order Now
+                    </button>
+
+                    <div class="text-center mt-3 text-muted small">
+                        <i class="bi bi-shield-check me-1"></i> Guaranteed Artisan Direct-to-Consumer Purchase
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

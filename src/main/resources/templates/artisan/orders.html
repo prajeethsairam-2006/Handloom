@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Artisan Orders')}"></head>
+<body>
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<main class="container my-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb small">
+            <li class="breadcrumb-item"><a th:href="@{/artisan/dashboard}" class="text-decoration-none">Dashboard</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Orders Received</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-1">
+                <i class="bi bi-box-seam me-2 text-primary"></i> Orders for Your Studio
+            </h3>
+            <span class="text-muted small">Fulfill orders and keep patrons updated with dispatch status</span>
+        </div>
+    </div>
+
+    <!-- Orders Table -->
+    <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+        <div th:if="${orders.isEmpty()}" class="text-center py-5 text-muted small">
+            No orders have been placed for your products yet.
+        </div>
+
+        <div th:unless="${orders.isEmpty()}" class="table-responsive">
+            <table class="table table-custom align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Order Date</th>
+                        <th>Customer & Address</th>
+                        <th>Your Products</th>
+                        <th>Payment</th>
+                        <th>Status</th>
+                        <th>Update Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="ord : ${orders}">
+                        <td>
+                            <strong class="text-dark" th:text="${ord.orderNumber}">ORD-2026-0001</strong>
+                        </td>
+                        <td class="small" th:text="${#temporals.format(ord.createdAt, 'dd MMM yyyy')}">25 Sep 2026</td>
+                        <td>
+                            <div class="fw-semibold small" th:text="${ord.customerName}">Priya Sharma</div>
+                            <div class="small text-muted" th:text="${ord.phone}">9876543210</div>
+                            <div class="small text-muted text-truncate" style="max-width: 200px;" th:text="${ord.deliveryAddress} + ', ' + ${ord.city}">Coimbatore</div>
+                        </td>
+                        <td>
+                            <div th:each="it : ${ord.items}" class="d-flex align-items-center gap-2 mb-1">
+                                <img th:src="@{${it.productImageUrl}}" th:alt="${it.productName}" class="rounded border" style="width: 36px; height: 36px; object-fit: cover;">
+                                <div class="small">
+                                    <div class="fw-semibold text-truncate" style="max-width: 180px;" th:text="${it.productName}">Product</div>
+                                    <span class="text-muted">Qty: <strong th:text="${it.quantity}">1</strong> | ₹<span th:text="${#numbers.formatDecimal(it.subtotal, 1, 'COMMA', 2, 'POINT')}">2,250.00</span></span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="small">
+                                <span class="fw-semibold" th:text="${ord.payment != null ? ord.payment.paymentMethod : 'COD'}">COD</span>
+                                <div th:class="${ord.payment != null and ord.payment.paymentStatus == 'PAID' ? 'text-success fw-bold' : 'text-warning fw-bold'}"
+                                     th:text="${ord.payment != null ? ord.payment.paymentStatus : 'PENDING'}">PENDING</div>
+                            </div>
+                        </td>
+                        <td>
+                            <span th:class="'badge fs-6 px-2 py-1 badge-' + ${#strings.toLowerCase(ord.orderStatus)}" th:text="${ord.orderStatus}">
+                                PLACED
+                            </span>
+                        </td>
+                        <td>
+                            <form th:action="@{/artisan/orders/{id}/status(id=${ord.id})}" method="post" class="d-flex align-items-center gap-1">
+                                <select name="status" class="form-select form-select-sm" style="width: 135px;">
+                                    <option value="CONFIRMED" th:selected="${ord.orderStatus == 'CONFIRMED'}">CONFIRMED</option>
+                                    <option value="PROCESSING" th:selected="${ord.orderStatus == 'PROCESSING'}">PROCESSING</option>
+                                    <option value="SHIPPED" th:selected="${ord.orderStatus == 'SHIPPED'}">SHIPPED</option>
+                                    <option value="DELIVERED" th:selected="${ord.orderStatus == 'DELIVERED'}">DELIVERED</option>
+                                    <option value="CANCELLED" th:selected="${ord.orderStatus == 'CANCELLED'}">CANCELLED</option>
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-outline-primary">Save</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

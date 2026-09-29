@@ -1,0 +1,358 @@
+/* Handloom & Artisan Marketplace - Professional Custom Design System */
+
+:root {
+    --primary-color: #8C3826;        /* Terracotta / Brick red */
+    --primary-hover: #722c1d;
+    --primary-light: #F7EBE7;
+    --secondary-color: #3D4A41;      /* Deep Earthy Moss */
+    --accent-gold: #C88A2C;          /* Traditional Brass / Zari Gold */
+    --accent-light: #FAF3E7;
+    
+    --bg-main: #FAFAF7;              /* Natural off-white / unbleached cotton */
+    --bg-card: #FFFFFF;
+    --border-color: #E8E4DC;
+    --border-subtle: #F0EDE6;
+    
+    --text-primary: #242220;
+    --text-secondary: #615D58;
+    --text-muted: #8C8780;
+    
+    --success-color: #2D6A4F;
+    --warning-color: #D97706;
+    --danger-color: #B91C1C;
+    
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    
+    --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
+    --shadow-card: 0 4px 12px rgba(43, 34, 25, 0.06);
+    --shadow-hover: 0 8px 24px rgba(43, 34, 25, 0.10);
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+}
+
+main {
+    flex: 1 0 auto;
+}
+
+/* Header & Navigation */
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--primary-color) !important;
+}
+
+.brand-badge {
+    font-size: 0.72rem;
+    font-weight: 600;
+    background-color: var(--accent-light);
+    color: var(--accent-gold);
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.top-bar {
+    background-color: #221F1E;
+    color: #CFCBC4;
+    font-size: 0.82rem;
+    padding: 6px 0;
+}
+
+.navbar-nav .nav-link {
+    font-weight: 500;
+    color: var(--text-primary);
+    padding: 0.5rem 0.9rem;
+    transition: color 0.15s ease;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+    color: var(--primary-color);
+}
+
+/* Product Card */
+.product-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-hover);
+    border-color: #D6CFC3;
+}
+
+.product-image-wrap {
+    position: relative;
+    padding-top: 85%;
+    overflow: hidden;
+    background-color: #F0EDE6;
+}
+
+.product-image-wrap img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.product-card:hover .product-image-wrap img {
+    transform: scale(1.03);
+}
+
+.product-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(36, 34, 32, 0.85);
+    color: #FFF;
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: var(--radius-sm);
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+
+.artisan-tag {
+    font-size: 0.78rem;
+    color: var(--primary-color);
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    text-decoration: none;
+}
+
+.artisan-tag:hover {
+    text-decoration: underline;
+    color: var(--primary-hover);
+}
+
+.price-tag {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+/* Artisan Profile Cards */
+.artisan-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    transition: box-shadow 0.2s ease;
+}
+
+.artisan-card:hover {
+    box-shadow: var(--shadow-hover);
+}
+
+.artisan-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    font-weight: 700;
+}
+
+/* Category Pill Card */
+.category-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    text-align: center;
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+    display: block;
+}
+
+.category-card:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    box-shadow: var(--shadow-card);
+}
+
+/* Primary Button Styling */
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #FFF;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    padding: 8px 16px;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+    color: #FFF;
+}
+
+.btn-outline-primary {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: #FFF;
+}
+
+/* Hero Section */
+.hero-banner {
+    background-color: #242220;
+    color: #F7F4EE;
+    border-radius: var(--radius-lg);
+    padding: 48px 40px;
+    margin-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-tag {
+    color: var(--accent-gold);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* Dashboard Metrics */
+.metric-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    box-shadow: var(--shadow-subtle);
+}
+
+.metric-val {
+    font-size: 1.85rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-top: 4px;
+}
+
+.metric-lbl {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+/* Tables */
+.table-custom {
+    background: #FFF;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.table-custom th {
+    background-color: #F7F4EE;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border-color);
+    padding: 12px 16px;
+}
+
+.table-custom td {
+    padding: 14px 16px;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+/* Cart Quantity Pill */
+.qty-control {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    background: #FFF;
+}
+
+.qty-control button {
+    border: none;
+    background: transparent;
+    padding: 4px 10px;
+    font-weight: 600;
+}
+
+.qty-control input {
+    width: 44px;
+    text-align: center;
+    border: none;
+    font-weight: 600;
+}
+
+/* Status Badges */
+.badge-placed { background-color: #E0E7FF; color: #3730A3; }
+.badge-confirmed { background-color: #CFFAFE; color: #155E75; }
+.badge-processing { background-color: #FEF3C7; color: #92400E; }
+.badge-shipped { background-color: #EDE9FE; color: #5B21B6; }
+.badge-delivered { background-color: #D1FAE5; color: #065F46; }
+.badge-cancelled { background-color: #FEE2E2; color: #991B1B; }
+
+.badge-paid { background-color: #D1FAE5; color: #065F46; }
+.badge-pending { background-color: #FEF3C7; color: #92400E; }
+
+/* Stars Rating */
+.star-rating {
+    color: var(--accent-gold);
+    font-size: 0.95rem;
+}
+
+/* Footer */
+footer {
+    background-color: #1E1C1A;
+    color: #A39E96;
+    font-size: 0.88rem;
+    padding: 48px 0 24px;
+    border-top: 1px solid #332F2C;
+}
+
+footer a {
+    color: #C9C4BC;
+    text-decoration: none;
+}
+
+footer a:hover {
+    color: #FFF;
+    text-decoration: underline;
+}

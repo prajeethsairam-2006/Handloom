@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head(${artisan.businessName})}"></head>
+<body>
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<main class="container my-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb small">
+            <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none">Home</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/artisans}" class="text-decoration-none">Artisans</a></li>
+            <li class="breadcrumb-item active" aria-current="page" th:text="${artisan.businessName}">Artisan Profile</li>
+        </ol>
+    </nav>
+
+    <!-- Artisan Bio Header Card -->
+    <div class="card border-0 shadow-sm p-4 rounded-3 mb-4 bg-white">
+        <div class="row align-items-center g-3">
+            <div class="col-auto">
+                <div class="artisan-avatar" style="width: 72px; height: 72px; font-size: 1.8rem;" th:text="${#strings.substring(artisan.businessName, 0, 1)}">
+                    L
+                </div>
+            </div>
+            <div class="col">
+                <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                    <h3 class="fw-bold mb-0 text-dark" th:text="${artisan.businessName}">Lakshmi Handlooms</h3>
+                    <span class="badge bg-success-subtle text-success"><i class="bi bi-patch-check-fill me-1"></i> Verified Maker</span>
+                </div>
+                <div class="text-muted small mb-2">
+                    <i class="bi bi-geo-alt-fill text-danger me-1"></i> <span th:text="${artisan.location}">Coimbatore, Tamil Nadu</span> &bull;
+                    <i class="bi bi-tools text-primary me-1"></i> Craft: <span class="fw-semibold text-dark" th:text="${artisan.craftType}">Handwoven Sarees</span>
+                </div>
+                <p class="text-secondary small mb-0" th:text="${artisan.description}">
+                    Master weaver heritage family preserving authentic Coimbatore soft silk and Kanchipuram weave traditions.
+                </p>
+            </div>
+            <div class="col-md-auto text-md-end border-start ps-md-4">
+                <div class="small text-muted mb-1">Loom Capacity:</div>
+                <div class="fw-bold fs-5 text-dark" th:text="${products.size()} + ' Products'">4 Products</div>
+                <div class="badge bg-light text-dark border mt-1">Direct-to-Consumer</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Products By This Artisan -->
+    <h4 class="fw-bold mb-3">Handcrafted Creations by <span th:text="${artisan.businessName}">Artisan</span></h4>
+
+    <div th:if="${products.isEmpty()}" class="card border-0 shadow-sm p-5 text-center text-muted small">
+        This artisan has no active products listed at this moment.
+    </div>
+
+    <div th:unless="${products.isEmpty()}" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+        <div class="col" th:each="prod : ${products}">
+            <div class="product-card">
+                <div class="product-image-wrap">
+                    <img th:src="@{${prod.imageUrl}}" th:alt="${prod.name}">
+                    <span class="product-badge" th:text="${prod.categoryName}">Category</span>
+                </div>
+                <div class="p-3 d-flex flex-column flex-grow-1">
+                    <h6 class="fw-semibold text-truncate mb-1">
+                        <a th:href="@{/products/{id}(id=${prod.id})}" class="text-decoration-none text-dark" th:text="${prod.name}">Product Name</a>
+                    </h6>
+                    <div class="small text-muted mb-2 text-truncate" th:text="${prod.material}">Material</div>
+
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <div class="star-rating">
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <span class="fw-bold small text-dark" th:text="${prod.averageRating > 0 ? prod.averageRating : 'New'}">4.8</span>
+                        </div>
+                        <span th:class="${prod.stockQuantity > 0 ? 'badge bg-success-subtle text-success small' : 'badge bg-danger-subtle text-danger small'}"
+                              th:text="${prod.stockQuantity > 0 ? 'In Stock' : 'Out of Stock'}">In Stock</span>
+                    </div>
+
+                    <div class="mt-auto d-flex justify-content-between align-items-center pt-2 border-top">
+                        <span class="price-tag" th:text="'₹' + ${#numbers.formatDecimal(prod.price, 1, 'COMMA', 2, 'POINT')}">₹1,450.00</span>
+                        <a th:href="@{/products/{id}(id=${prod.id})}" class="btn btn-sm btn-outline-primary">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>

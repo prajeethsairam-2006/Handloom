@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: head('Handloom Products')}"></head>
+<body>
+<div th:replace="~{fragments/header :: navbar}"></div>
+
+<main class="container my-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb small">
+            <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Products</li>
+        </ol>
+    </nav>
+
+    <div class="row g-4">
+        <!-- Sidebar Filters -->
+        <aside class="col-lg-3">
+            <div class="card border-0 shadow-sm p-3 rounded-3">
+                <h5 class="fw-bold mb-3 d-flex align-items-center justify-content-between">
+                    <span><i class="bi bi-funnel me-1 text-primary"></i> Filters</span>
+                    <a th:href="@{/products}" class="text-decoration-none small text-muted">Reset</a>
+                </h5>
+
+                <form th:action="@{/products}" method="get">
+                    <!-- Search Input -->
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Search Keywords</label>
+                        <div class="input-group">
+                            <input type="text" name="keyword" th:value="${keyword}" class="form-control form-control-sm" placeholder="Saree, Indigo, Silk...">
+                            <button class="btn btn-sm btn-outline-secondary" type="submit"><i class="bi bi-search"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Category Filter -->
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Category</label>
+                        <select name="categoryId" class="form-select form-select-sm" onchange="this.form.submit()">
+                            <option value="">All Categories</option>
+                            <option th:each="cat : ${categories}"
+                                    th:value="${cat.id}"
+                                    th:text="${cat.name}"
+                                    th:selected="${selectedCategory != null and selectedCategory == cat.id}">
+                                Category Name
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Price Filter -->
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Price Range (₹)</label>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <input type="number" name="minPrice" th:value="${minPrice}" class="form-control form-control-sm" placeholder="Min">
+                            </div>
+                            <div class="col-6">
+                                <input type="number" name="maxPrice" th:value="${maxPrice}" class="form-control form-control-sm" placeholder="Max">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-sm w-100">
+                        Apply Filters
+                    </button>
+                </form>
+            </div>
+        </aside>
+
+        <!-- Products Grid Area -->
+        <div class="col-lg-9">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h4 class="fw-bold mb-0">Handcrafted Products</h4>
+                    <span class="text-muted small" th:text="${products.size()} + ' products found'">12 products found</span>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div th:if="${products.isEmpty()}" class="text-center py-5 bg-white rounded border">
+                <i class="bi bi-inbox fs-1 text-muted"></i>
+                <h5 class="fw-semibold mt-3">No products match your criteria</h5>
+                <p class="text-muted small">Try modifying your filters or search keywords.</p>
+                <a th:href="@{/products}" class="btn btn-outline-primary btn-sm">Clear All Filters</a>
+            </div>
+
+            <!-- Product Cards Grid -->
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                <div class="col" th:each="prod : ${products}">
+                    <div class="product-card">
+                        <div class="product-image-wrap">
+                            <img th:src="@{${prod.imageUrl}}" th:alt="${prod.name}">
+                            <span class="product-badge" th:text="${prod.categoryName}">Category</span>
+                        </div>
+                        <div class="p-3 d-flex flex-column flex-grow-1">
+                            <a th:href="@{/artisans/{id}(id=${prod.artisanId})}" class="artisan-tag mb-1">
+                                <i class="bi bi-person-fill"></i> <span th:text="${prod.artisanBusinessName}">Artisan</span>
+                            </a>
+                            <h6 class="fw-semibold text-truncate mb-1">
+                                <a th:href="@{/products/{id}(id=${prod.id})}" class="text-decoration-none text-dark" th:text="${prod.name}">Product Name</a>
+                            </h6>
+                            <div class="small text-muted mb-2 text-truncate" th:text="${prod.material} + ' | ' + ${prod.originLocation}">Material & Location</div>
+
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <div class="star-rating">
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <span class="fw-bold small text-dark" th:text="${prod.averageRating > 0 ? prod.averageRating : 'New'}">4.8</span>
+                                </div>
+                                <div>
+                                    <span th:if="${prod.stockQuantity > 0}" class="badge bg-success-subtle text-success small">In Stock (<span th:text="${prod.stockQuantity}">10</span>)</span>
+                                    <span th:if="${prod.stockQuantity <= 0}" class="badge bg-danger-subtle text-danger small">Out of Stock</span>
+                                </div>
+                            </div>
+
+                            <div class="mt-auto d-flex justify-content-between align-items-center pt-2 border-top">
+                                <span class="price-tag" th:text="'₹' + ${#numbers.formatDecimal(prod.price, 1, 'COMMA', 2, 'POINT')}">₹1,450.00</span>
+                                <a th:href="@{/products/{id}(id=${prod.id})}" class="btn btn-sm btn-outline-primary">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
